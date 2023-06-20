@@ -1,0 +1,192 @@
+{% extends 'base2.html' %}
+
+
+
+{% block sidebar %}
+
+{% endblock %}
+
+ {% block content %}
+<br/>
+
+
+<div class="container">
+    <p align="center">{{ tipo_da_pecao }} </p>
+
+    <form name="form1" class="" action=""  method="post">{% csrf_token %}
+
+   {% if messages %}
+     <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+       {% endfor %}
+    </ul>
+  {% endif %}
+
+
+   <div class="row">
+
+       <div class="form-group">
+
+           <div class="col">
+             <label for="" id="lb_tipo" class="col-form-label">Tipo</label>
+             <select name="tipo" id="lb_tipo" class="form-control" />
+                <option value=""></option>
+                <option value="Desarquivamento DHD">Desarquivamento Dev.Hon.Duplicidade</option>
+                <option value="Devolucao HPIMPROC">Devolução HP Improcedência</option>
+                <option value="Devolucao HPEXTSEMRESOLUCAO">Devolução HP Extinto S/Resolução</option>
+                <option value="Disp COMPROVANTETRANSF">Disponibilização Comprovante Transferência</option>
+
+             </select>
+          </div>
+
+           <div class="col">
+             <label for="" id="lb_pasta" class="col-form-label">Pasta Saj</label>
+             <input type="text" name="pasta" id="id_pasta" class="form-control" />
+          </div>
+
+
+          <div class="col">
+            <label for="" id="lb_dados" class="col-form-label">Cliente/Autor/Comarca</label>
+            <input type="text" name="dados" id="id_dados" class="form-control" size="250"  />
+         </div>
+
+
+      </div>
+
+
+        <input type="hidden" name="cod_cliente" id="cod_cliente" value="" />
+        <input type="hidden" name="autor" id="autor" value=""  />
+        <input type="hidden" name="comarca" id="comarca" value=""  />
+        <input type="hidden" name="uf" id="uf" value="" />
+        <input type="hidden" name="cliente" id="cliente" value=""/>
+        <input type="hidden" name="juizo" id="juizo" value=""/>
+        <input type="hidden" name="nr_processo" id="nr_processo" value=""/>
+        <input type="hidden" name="orgao" id="orgao" value=""/>
+        <input type="hidden" name="num_orgao" id="num_orgao" value=""/>
+        <input type="hidden" name="secao" id="secao" value=""/>
+        <input type="hidden" name="oabjb" id="oabjb" value=""/>
+        <input type="hidden" name="publicando_nome" id="publicando_nome" value=""/>
+        <input type="hidden" name="publicando_oab" id="publicando_oab" value=""/>
+        <input type="hidden" name="publicando_sexo" id="publicando_sexo" value=""/>
+        <input type="hidden" name="conveniado_nome" id="conveniado_nome" value=""/>
+        <input type="hidden" name="conveniado_oab" id="conveniado_oab" value=""/>
+
+    </div>
+</div>
+
+
+
+  <br>
+    <p>
+        <a href="#" onclick="fnAvancar();" id="a_avancar" class="avancar">
+        Avançar
+    </a>
+    </p>
+
+<script>
+
+
+function fnColor(){
+        document.getElementById("lb_pasta").style.color="#000";
+        document.getElementById("lb_dados").style.color="#000";
+        return true;
+}
+
+function fnAvancar(){
+        fnColor();
+        var frm = document.form1;
+
+        if (document.getElementById("id_pasta").value==""){
+                alert("Informe o codigo da pasta!");
+                document.getElementById("lb_pasta").style.color="red";
+                document.getElementById("id_pasta").focus();
+                return false;
+        }
+        if (document.getElementById("id_dados").value==""){
+                alert("Codigo da pasta nao localizado!");
+                document.getElementById("lb_pasta").style.color="red";
+                document.getElementById("id_pasta").focus();
+                return false;
+        }
+
+        frm.submit();
+}
+
+
+</script>
+
+   </form>
+   <hr>
+</div>
+
+
+<style>
+
+
+.normal {
+        display: block;
+}
+
+.oculta {
+        display: none;
+}
+
+.avancar {
+        border-style:solid;
+        padding-bottom:5px;
+        padding-top:5px;
+        padding-left:10px;
+        padding-right:10px;
+        font-size:20px;
+        letter-spacing:1px;
+}
+
+
+</style>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
+<script>
+$(document).ready(function(){
+        var parametro1 = document.getElementById("id_pasta");
+
+        $(parametro1).change(function(){
+
+                var param = document.getElementById("id_pasta").value;
+                document.getElementById("id_dados").value="";
+                $.ajax({
+                        type: "GET",
+                        url: "{% url 'pecas:v003_ajax' %}",
+                        data: {
+                                opcao: param
+                        },
+                        headers: {
+                                "X-Requested-With": "XMLHttpRequest",
+                        },
+                        success: function(data){
+                                let dados = data[0].value + '/' + data[1].value + '/' + data[2].value+'-'+data[3].value+'/'+data[4].value;
+                                document.getElementById("id_dados").value = dados;
+                                document.getElementById("cod_cliente").value = data[1].value;
+                                document.getElementById("autor").value =  data[2].value;
+                                document.getElementById("comarca").value =  data[3].value;
+                                document.getElementById("uf").value =  data[4].value;
+                                document.getElementById("cliente").value = data[10].value;
+                                document.getElementById("juizo").value = data[7].value;
+                                document.getElementById("nr_processo").value = data[9].value;
+                                document.getElementById("secao").value = data[8].value;
+                                document.getElementById("oabjb").value = data[11].value;
+                                document.getElementById("publicando_nome").value = data[12].value;
+                                document.getElementById("publicando_oab").value = data[13].value;
+                                document.getElementById("publicando_sexo").value = data[14].value;
+                                document.getElementById("conveniado_nome").value = data[15].value;
+                                document.getElementById("conveniado_oab").value = data[16].value;
+                        }
+                });
+        });
+});
+
+</script>
+
+
+{% endblock %}

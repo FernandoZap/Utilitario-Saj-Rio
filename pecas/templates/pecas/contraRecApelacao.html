@@ -1,0 +1,447 @@
+{% extends 'base2.html' %}
+
+
+
+{% block sidebar %}
+
+{% endblock %}
+
+ {% block content %}
+<br/>
+
+<div class="container">    
+<p align="center">Modelo de Petição: - {{ tipo_da_peca }}</p>
+
+<p align="left">Pasta: {{ pasta }} Processo: {{ nr_processo }}<br>Autor: {{ autor }} </br>
+Comarca: {{ comarca }}-{{ uf }}</p>
+
+   <form name="form1" action="" method="post">{%csrf_token%}
+
+   {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+<div class="row">   
+
+<div class="form-group">
+    
+	
+    <div class="col">
+    <label for="" id="lb_fundamentacao" class="col-form-label">1. Qual a fundamentação da decisao terminativa?</label>
+    <select name="fundamentacao" id="fundamentacao" class="form-control">
+	<option value="" selected></option>	
+	<option value="AuAP">Ausência do Autor na Perícia</option>
+	<option value="AuIA">Ausência de Interesse de Agir</option>
+	<option value="AuNC">Ausência de Nexo Causal</option>
+	<option value="AuLIML">Ausência do Laudo do IML</option>
+	<option value="AuS">Ausência de sequela</option>
+	<option value="CM">Apenas correção monetária no pagto adm</option>
+    </select>   
+    </div>
+    <br>
+	
+    <div class="col">
+    <label for="" id="lb_nulidade" class="col-form-label">2. Há nulidade de publicação?</label>
+    <select name="nulidade"  id="nulidade" class="form-control" onchange="fnExibicao('nulidade');" >
+		<option value="" selected ></option>
+		<option value="SIM">Sim</option>
+		<option value="NAO">Não</option>
+    </select>   
+    </div>
+
+	<div id="sub_nulidade" class="oculta">
+    <div class="col">
+    <label for="" id="lb_dtPublic" class="col-form-label">2.1 Data da Publicacao</label>
+    <input type="date" name="dtPublic"  id="dtPublic" class="form-control" >
+    </div>
+	</div>
+<br>	
+
+<div class="col">
+<label for="" id="lb_inovacaoRec" class="col-form-label">3. Trata-se de Inovação Recursal?</label>
+<br>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inovacaoRec" id="inovacaoRec1" value="SIM">
+  <label class="form-check-label" for="inovacaoRec1">Sim (Inserir Tese PG)</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inovacaoRec" id="inovacaoRec2" value="NAO">
+  <label class="form-check-label" for="inovacaoRec2">Não</label>
+</div>
+</div>	
+<br>	
+
+<div class="col">
+<label for="" id="lb_prescricao" class="col-form-label"><span id="id_prescricao">4. Há Prescrição?</span></label>
+<br>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="prescricao" id="prescricao1" value="SIM">
+  <label class="form-check-label" for="prescricao1">Sim</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="prescricao" id="prescricao2" value="NAO">
+  <label class="form-check-label" for="prescricao2">Não</label>
+</div>
+</div>	
+<br>	
+
+
+    <div class="col">
+    <label for="" id="lb_pedidoPagtoAdm" class="col-form-label">5. Sobre o pedido de pagamento administrativo</label>
+    <select name="pedidoPagtoAdm"  id="pedidoPagtoAdm" class="form-control" onchange="fnExibicao('pedidoPagtoAdm');">
+	<option value="" selected></option>	
+	<option value="1">Pedido foi negado ou sem sequela</option>
+	<option value="2">Pedido foi pago</option>
+	<option value="3">Não houve pedido</option>
+	<option value="4">Não houve resposa da seguradora</option>
+	<option value="5">Pedido foi cancelado</option>
+    </select>   
+    </div>
+
+	<div id="sub1_pedidoPagtoAdm" class="oculta">
+    <div class="col">
+    <label for="" id="lb_dtSinistro1" class="col-form-label">5.1 Data do Sinistro</label>
+    <input type="date" name="dtSinistro1"  id="dtSinistro1" class="form-control" >
+    </div>
+    <div class="col">
+    <label for="" id="lb_dtPedidoAdm" class="col-form-label">5.2 Data do Pedido Administrativo</label>
+    <input type="date" name="dtPedidoAdm"  id="dtPedidoAdm" class="form-control" >
+    </div>
+	
+    <div class="col">
+    <label for="" id="lb_tempoDecorrido" class="col-form-label">5.3 Tempo decorrido?</label>
+    <input type="text" name="tempoDecorrido"  id="tempoDecorrido" class="form-control" >
+    </div>
+	
+    <div class="col">
+    <label for="" id="lb_dtFinalCausaSusp" class="col-form-label">5.4 Data final da Causa Suspensiva</label>
+    <input type="date" name="dtFinalCausaSusp"  id="dtFinalCausaSusp" class="form-control" >
+    </div>
+
+    <div class="col">
+    <label for="" id="lb_dtAjuizamento1" class="col-form-label">5.5 Data do Ajuizamento</label>
+    <input type="date" name="dtAjuizamento1"  id="dtAjuizamento1" class="form-control" >
+    </div>
+	</div>
+	<div id="sub2_pedidoPagtoAdm" class="oculta">
+    <div class="col">
+    <label for="" id="lb_dtSinistro2" class="col-form-label">5.1 Data do Sinistro</label>
+    <input type="date" name="dtSinistro2"  id="dtSinistro2" class="form-control" >
+    </div>
+    <div class="col">
+    <label for="" id="lb_dtDistribuicao" class="col-form-label">5.2 Data Distribuição</label>
+    <input type="date" name="dtDistribuicao"  id="dtDistribuicao" class="form-control" >
+    </div>	
+	</div>
+	
+	<div id="sub3_pedidoPagtoAdm" class="oculta">
+    <div class="col">
+    <label for="" id="lb_dtSinistro3" class="col-form-label">5.1 Data do Sinistro</label>
+    <input type="date" name="dtSinistro3"  id="dtSinistro3" class="form-control" >
+    </div>
+    <div class="col">
+    <label for="" id="lb_dtPagamentoAdm" class="col-form-label">5.2 Data do Pagamento Administrativo</label>
+    <input type="date" name="dtPagamentoAdm"  id="dtPagamentoAdm" class="form-control" >
+    </div>	
+    <div class="col">
+    <label for="" id="lb_dtAjuizamento3" class="col-form-label">5.3 Data do Ajuizamento</label>
+    <input type="date" name="dtAjuizamento3"  id="dtAjuizamento3" class="form-control" >
+    </div>
+	</div>
+<br>
+
+<div class="col">
+<label for="" id="lb_pagamentoAdm" class="col-form-label">6. Houve pagamento administrativo?</label>
+<br>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="pagamentoAdm" id="pagamentoAdm1" value="SIM">
+  <label class="form-check-label" for="pagamentoAdm1">Sim</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="pagamentoAdm" id="pagamentoAdm2" value="NAO">
+  <label class="form-check-label" for="pagamentoAdm2">Não</label>
+</div>
+</div>	
+<br>	
+
+<div class="col">
+<label for="" id="lb_pedidoDanoMoral" class="col-form-label">7. Pedido de Dano Moral?</label>
+<br>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="pedidoDanoMoral" id="pedidoDanoMoral1" value="SIM">
+  <label class="form-check-label" for="pedidoDanoMoral1">Sim</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="pedidoDanoMoral" id="pedidoDanoMoral2" value="NAO">
+  <label class="form-check-label" for="pedidoDanoMoral2">Não</label>
+</div>
+</div>	
+<br>	
+<!--
+select fundamentacao<>""
+select nulidade<>"" SIM,NAO  [dtPublic]
+check inovacaoRec (1,2) SIM,NAO
+check prescricao (1,2)  SIM, NAO
+select pedidoPagtoAdm<>""  1,2,3,4,5
+check pagamentoAdm (1,2) SIM,NAO
+check pedidoDanoMoral (1,2)  SIM,NAO
+
+pedidoPagtoAdm
+dtSinistro1,dtPedidoAdm,tempoDecorrido,dtFinalCausaSusp,dtAjuizamento1
+dtSinistro2,dtDistribuicao
+dtSinistro3,dtPagamentoAdm,dtAjuizamento3
+-->
+
+
+</div>    
+</div>  
+
+<input type="hidden" name="pasta" value="{{ pasta }}" />
+<input type="hidden" name="juizado_especial" value="{{ juizado_especial }}" />
+<input type="hidden" name="estado" value="{{ estado }}" />
+<input type="hidden" name="tipo_da_sentenca" value="{{ tipo_da_sentenca }}" />
+
+    <p>
+    	<a href="#" onclick="fnAvancar();" id="a_avancar" class="avancar"  >
+    	Avançar</a>
+    </p>
+	
+<script>
+
+function fnAvancar(){
+	var frm = document.form1;   
+	if (!fnValidar_1()){
+		alert("Validado com erro");
+		return false
+	} else if (!fnValidar_2()){
+		alert("Validado com erro");
+		return false
+	}
+	//alert("validado ok");
+	//return false;
+	frm.submit();
+}
+function fnColor_1(){
+	document.getElementById("lb_fundamentacao").style.color="#000";
+	document.getElementById("lb_nulidade").style.color="#000";
+	document.getElementById("lb_inovacaoRec").style.color="#000";
+	document.getElementById("lb_prescricao").style.color="#000";
+	document.getElementById("lb_pedidoPagtoAdm").style.color="#000";
+	document.getElementById("lb_pagamentoAdm").style.color="#000";
+	document.getElementById("lb_pedidoDanoMoral").style.color="#000";
+	return true;
+}
+function fnColor_2(){
+	document.getElementById("lb_dtPublic").style.color="#000";
+	document.getElementById("lb_dtSinistro1").style.color="#000";
+	document.getElementById("lb_dtPedidoAdm").style.color="#000";
+	document.getElementById("lb_tempoDecorrido").style.color="#000";
+	document.getElementById("lb_dtFinalCausaSusp").style.color="#000";
+	document.getElementById("lb_dtAjuizamento1").style.color="#000";
+	document.getElementById("lb_dtSinistro2").style.color="#000";
+	document.getElementById("lb_dtDistribuicao").style.color="#000";
+	document.getElementById("lb_dtSinistro3").style.color="#000";
+	document.getElementById("lb_dtPagamentoAdm").style.color="#000";
+	document.getElementById("lb_dtAjuizamento3").style.color="#000";
+	return true;
+}
+
+
+function fnValidar_1(){
+	fnColor_1();
+	if (document.getElementById("fundamentacao").value==""){
+		alert("Informe a fundamentação da decisao terminativa");
+		document.getElementById("fundamentacao").focus();
+		document.getElementById("lb_fundamentacao").style.color="red";
+		return false;
+	}
+	if (document.getElementById("nulidade").value==""){
+			alert("Informe se há nulidade de publicação");
+			document.getElementById("lb_nulidade").style.color="#red";
+			document.getElementById("nulidade").focus();
+			return false;
+	}
+
+	if (!document.getElementById("inovacaoRec1").checked){
+		if (!document.getElementById("inovacaoRec2").checked){
+			alert("Informe se se trata de inovacao recursal");
+			document.getElementById("lb_inovacaoRec").style.color="red";
+			return false;
+		}
+	}
+
+	if (!document.getElementById("prescricao1").checked){
+		if (!document.getElementById("prescricao2").checked){
+			alert("Informe se há prescrição");
+			document.getElementById("lb_prescricao").style.color="red";
+			return false;
+		}
+	}
+	
+	if (document.getElementById("pedidoPagtoAdm").value==""){
+		alert("Informe sobre o pedido de pagamento administrativo");
+		document.getElementById("lb_pedidoPagtoAdm").style.color="red";
+		document.getElementById("pedidoPagtoAdm").focus();
+		return false;
+	}
+	
+	if (!document.getElementById("pagamentoAdm1").checked){
+		if (!document.getElementById("pagamentoAdm2").checked){
+			alert("Informe se houve pagamento administrativo");
+			document.getElementById("lb_pagamentoAdm").style.color="red";
+			return false;
+		}
+	}
+
+	if (!document.getElementById("pedidoDanoMoral1").checked){
+		if (!document.getElementById("pedidoDanoMoral2").checked){
+			alert("Informe sobre o pedido de dano moral");
+			document.getElementById("lb_pedidoDanoMoral").style.color="red";
+			return false;
+		}
+	}
+	return true;
+}
+
+function fnValidar_2(){
+	fnColor_2();
+	if (document.getElementById("nulidade").value=="SIM"){
+		if (document.getElementById("dtPublic").value==""){
+			alert("Informe a data da publicacao!");
+			document.getElementById("lb_dtPublic").style.color="red";
+			document.getElementById("dtPublic").focus();
+			return false;
+		}
+	}
+	if (document.getElementById("pedidoPagtoAdm").value=="1"){
+		if (document.getElementById("dtSinistro1").value==""){
+			alert("Informe a data do sinistro!");
+			document.getElementById("lb_dtSinistro1").style.color="red";
+			document.getElementById("dtSinistro1").focus();
+			return false;
+		}
+		if (document.getElementById("dtPedidoAdm").value==""){
+			alert("Informe a data do pedido administrativo!");
+			document.getElementById("lb_dtPedidoAdm").style.color="red";
+			document.getElementById("dtPedidoAdm").focus();
+			return false;
+		}
+		if (document.getElementById("tempoDecorrido").value==""){
+			alert("Informe o tempo decorrido!");
+			document.getElementById("lb_tempoDecorrido").style.color="red";
+			document.getElementById("tempoDecorrido").focus();
+			return false;
+		}
+		if (document.getElementById("dtFinalCausaSusp").value==""){
+			alert("Informe a data final da causa suspensao!");
+			document.getElementById("lb_dtFinalCausaSusp").style.color="red";
+			document.getElementById("dtFinalCausaSusp").focus();
+			return false;
+		}
+		if (document.getElementById("dtAjuizamento1").value==""){
+			alert("Informe a data final do ajuizamento!");
+			document.getElementById("lb_dtAjuizamento1").style.color="red";
+			document.getElementById("dtAjuizamento1").focus();
+			return false;
+		}
+	}
+	
+	if (document.getElementById("pedidoPagtoAdm").value=="2"){
+		if (document.getElementById("dtSinistro2").value==""){
+			alert("Informe a data do sinistro!");
+			document.getElementById("lb_dtSinistro2").style.color="red";
+			document.getElementById("dtSinistro2").focus();
+			return false;
+		}
+		if (document.getElementById("dtDistribuicao").value==""){
+			alert("Informe a data da distribuicao!");
+			document.getElementById("lb_dtDistribuicao").style.color="red";
+			document.getElementById("dtDistribuicao").focus();
+			return false;
+		}
+	}
+	if (document.getElementById("pedidoPagtoAdm").value=="3"){
+		if (document.getElementById("dtSinistro3").value==""){
+			alert("Informe a data do sinistro!");
+			document.getElementById("lb_dtSinistro3").style.color="red";
+			document.getElementById("dtSinistro3").focus();
+			return false;
+		}
+		if (document.getElementById("dtPagamentoAdm").value==""){
+			alert("Informe a data do pagamento administrativo!");
+			document.getElementById("lb_dtPagamentoAdm").style.color="red";
+			document.getElementById("dtPagamentoAdm").focus();
+			return false;
+		}
+		if (document.getElementById("dtAjuizamento3	").value==""){
+			alert("Informe a data do ajuizamento!");
+			document.getElementById("lb_dtAjuizamento3").style.color="red";
+			document.getElementById("dtAjuizamento3	").focus();
+			return false;
+		}
+	}
+	return true;
+}	
+
+function fnExibicao(param_id){
+	if (param_id=="nulidade"){
+		document.getElementById("sub_nulidade").className="oculta";
+		if (document.getElementById("nulidade").value=="SIM"){
+			document.getElementById( "sub_nulidade" ).className = "normal";
+		}
+	} else if (param_id=="pedidoPagtoAdm"){
+		document.getElementById( "sub1_pedidoPagtoAdm" ).className = "oculta";
+		document.getElementById( "sub2_pedidoPagtoAdm" ).className = "oculta";
+		document.getElementById( "sub3_pedidoPagtoAdm" ).className = "oculta";
+		
+		if (document.getElementById("pedidoPagtoAdm").value=="1"){
+			document.getElementById( "sub1_pedidoPagtoAdm" ).className = "normal";
+		} else if (document.getElementById("pedidoPagtoAdm").value=="2"){
+			document.getElementById( "sub2_pedidoPagtoAdm" ).className = "normal";
+		} else if (document.getElementById("pedidoPagtoAdm").value=="3"){
+			document.getElementById( "sub3_pedidoPagtoAdm" ).className = "normal";
+		}
+	}
+}
+
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+   </form>
+   <hr>
+</div>
+</div>
+</div>
+
+
+<style>
+.normal {
+	display: block;
+	margin-left:40px;
+}
+
+.oculta {
+	display: none;
+}
+.avancar {
+	border-style:solid;
+	padding-bottom:5px;
+	padding-top:5px;
+	padding-left:10px;
+	padding-right:10px;
+	font-size:20px;
+	letter-spacing:1px;
+	
+}
+
+</style>
+
+{% endblock %}
+

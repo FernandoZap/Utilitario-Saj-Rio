@@ -1,0 +1,210 @@
+{% extends 'base2.html' %}
+
+
+
+{% block sidebar %}
+
+{% endblock %}
+
+ {% block content %}
+<br/>
+
+
+<div class="container">    
+<p align="center">{{ tipo_da_pecao }} </p>
+
+   <form name="form1" class="" action=""  method="post">{%csrf_token%}
+
+   {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+<div class="row">   
+
+<div class="form-group">
+      
+    <div class="col">
+    <label for="" id="lb_id_pasta" class="col-form-label">Pasta Saj</label>
+    <input type="text" name="pasta" id="id_pasta" class="form-control" onchange="fnNulidade();" />
+    </div>
+	
+    <div class="col">
+    <label for="id_dados" class="col-form-label">Cliente/Autor/Comarca</label>
+    <input type="text" name="dados" id="id_dados" class="form-control" size="250"  />
+	</div>
+	
+<div class="col">
+<label for="" id="lb_juizado" class="col-form-label">1. O processo tramita no Juizado Especial?</label>
+<br>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="juizado" id="juizado1" value="SIM">
+  <label class="form-check-label" for="juizado1">Sim</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="juizado" id="juizado2" value="NAO">
+  <label class="form-check-label" for="juizado2">Não</label>
+</div>
+</div>	
+<br>	
+
+<div class="col">
+<label for="" id="lb_estado" class="col-form-label">2. Qual estado tramita o processo?</label>
+<br>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="estado" id="estado1" value="PE">
+  <label class="form-check-label" for="estado1">Pernambuco</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="estado" id="estado2" value="SE">
+  <label class="form-check-label" for="estado2">Sergipe</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="estado" id="estado3" value="OT">
+  <label class="form-check-label" for="estado3">Outro</label>
+</div>
+</div>	
+
+<br>	
+
+<div class="col">
+<label for="" id="lb_tipoSentenca" class="col-form-label">3. Defina o tipo de sentença prolatada nos autos</label>
+<br>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="tipoDaSentenca" id="tipoSentenca1" value="Terminativa">
+  <label class="form-check-label" for="tipoSentenca1">Terminativa</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="tipoDaSentenca" id="tipoSentenca2" value="Definitiva">
+  <label class="form-check-label" for="tipoSentenca2">Definitiva</label>
+</div>
+</div>	
+
+	<input type="hidden" name="autor" id="autor" value=""  />
+	<input type="hidden" name="cod_cliente" id="cod_cliente" value="" />
+	<input type="hidden" name="comarca" id="comarca" value=""  />
+	<input type="hidden" name="uf" id="uf" value="" />
+    
+</div>    
+</div>  
+  <br>
+    <p>
+    	<a href="#" onclick="fnAvancar();" id="a_avancar" class="avancar" >
+		Avançar
+		</a>
+		
+    </p>
+
+<script>
+
+</script>
+
+   </form>
+   <hr>
+</div>
+
+
+<style>
+
+
+.normal {
+	display: block;
+}
+
+.oculta {
+	display: none;
+}
+
+.avancar {
+	border-style:solid;
+	padding-bottom:5px;
+	padding-top:5px;
+	padding-left:10px;
+	padding-right:10px;
+	font-size:20px;
+	letter-spacing:1px;
+	
+}
+
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
+<script>
+function fnColor(){
+	document.getElementById("lb_id_pasta").style.color="#000";
+	document.getElementById("lb_juizado").style.color="#000";
+	document.getElementById("lb_estado").style.color="#000";
+	document.getElementById("lb_tipoSentenca").style.color="#000";
+}
+function fnAvancar(){
+	var frm = document.form1;   
+	fnColor();
+	let combo = document.getElementById("id_pasts");
+	if (document.getElementById("id_dados").value==""){
+		alert("Informe o codigo da pasta!");
+		document.getElementById("lb_id_pasta").style.color="red";
+		return false;
+	}
+	if (!document.getElementById("juizado1").checked){
+		if (!document.getElementById("juizado2").checked){
+			alert("Informe o juizado!");
+			document.getElementById("lb_juizado").style.color="red";
+			return false;
+		}
+	}
+	
+	if (!document.getElementById("estado1").checked){
+		if (!document.getElementById("estado2").checked){
+			if (!document.getElementById("estado3").checked){
+				alert("Informe o Estado!");
+				document.getElementById("lb_estado").style.color="red";
+				return false;
+			}
+		}
+	}
+	
+	if (!document.getElementById("tipoSentenca1").checked){
+		if (!document.getElementById("tipoSentenca2").checked){
+			alert("Informe o tipo da Sentenca!");
+			document.getElementById("lb_tipoSentenca").style.color="red";
+			return false;
+		}
+	}
+	frm.submit();
+}
+
+
+$(document).ready(function(){
+	var parametro1 = document.getElementById("id_pasta");
+   
+	$(parametro1).change(function(){
+    
+		var param = document.getElementById("id_pasta").value;
+		document.getElementById("id_dados").value="";
+		$.ajax({
+			type: "get",
+			url: "{% url 'pecas:v003_ajax'  %}",
+			data: {
+				opcao: param
+			},
+			success: function(data){
+				let dados = data[1].value + '/' + data[2].value + '/' + data[3].value+'-'+data[4].value;
+				document.getElementById("id_dados").value = dados;
+				document.getElementById("cod_cliente").value = data[1].value;
+				document.getElementById("autor").value =  data[2].value;
+				document.getElementById("comarca").value =  data[3].value;
+				document.getElementById("uf").value =  data[4].value;
+			}
+		});
+	}); 
+});
+
+</script>
+
+
+{% endblock %}
+

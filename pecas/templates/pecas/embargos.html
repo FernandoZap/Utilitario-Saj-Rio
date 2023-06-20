@@ -1,0 +1,221 @@
+{% extends 'base2.html' %}
+
+
+
+{% block sidebar %}
+
+{% endblock %}
+
+ {% block content %}
+<br/>
+
+
+<div class="container">    
+
+<p align="center">Modelo de Petição: - {{ tipo_da_peca }}</p>
+
+
+   <form name="form1" class="" action=""  method="post">{%csrf_token%}
+
+   {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+<div class="row">   
+
+<div class="form-group">
+      
+    <div class="col">
+    <label for="" id="lb_pasta" class="col-form-label">Pasta Saj</label>
+    <input type="text" name="pasta" id="id_pasta" class="form-control" onchange="fnNulidade();" />
+    </div>
+	
+    <div class="col">
+    <label for="" id="lb_dados" class="col-form-label">Cliente/Autor/Comarca</label>
+    <input type="text" name="dados" id="id_dados" class="form-control" size="250"  />
+	</div>
+	
+    <div class="col">
+    <label for="" id="lb_nulidade" class="col-form-label">1. Há nulidade de publicação ?</label>
+    <select name="hanulidadepublic"  id="id_nulidade" class="form-control" onchange="fnNulidade();" >
+		<option value="" selected ></option>
+		<option value="S">Sim</option>
+		<option value="N">Não</option>
+    </select>   
+    </div>
+
+<div class="col">
+<div id="data_pub" class="oculta">
+    
+    <label for="" id="lb_data_publ" class="col-form-label">Data da Publicacao</label>
+
+  <input type="date" id="id_data_publ" name="data_publicacao" data-date-format='dd-mm-yyyy' />
+  </div>    
+</div>	
+
+</div>
+	
+    <div class="col">
+    <label for="" id="lb_embargo" class="col-form-label">2. Qual o motivo dos embargos ?</label>
+    <select name="motivo_embargos"  id="id_embargo" class="form-control" onchange="fnNulidade();" >
+	<option value="0" selected  ></option>	
+	<option value="OMISSAO">OMISSÃO</option>
+	<option value="ULTRA PETITA-CE">ULTRA PETITA - CE</option>
+	<option value="CONTRADICAO">CONTRADIÇÃO</option>
+	<option value="OBSCURIDADE">OBSCURIDADE</option>
+    </select>   
+    </div>
+
+	<input type="hidden" name="autor" id="autor" value=""  />
+	<input type="hidden" name="cod_cliente" id="cod_cliente" value="" />
+	<input type="hidden" name="comarca" id="comarca" value=""  />
+	<input type="hidden" name="uf" id="uf" value="" />
+    
+</div>    
+</div>  
+  <br>
+    <p>
+    	<a href="#" onclick="fnAvancar();" id="a_avancar" class="avancar">
+        Avançar
+    </a>
+    </p>
+
+
+
+
+<script>
+function fnColor(){
+	document.getElementById("lb_pasta").style.color="#000";
+	document.getElementById("lb_dados").style.color="#000";
+	document.getElementById("lb_nulidade").style.color="#000";
+	document.getElementById("lb_data_publ").style.color="#000";
+	document.getElementById("lb_embargo").style.color="#000";
+	return true;
+}
+
+function fnAvancar(){
+	fnColor();
+	var frm = document.form1;   
+	let combo = document.getElementById("id_embargo");
+	let combo2 = document.getElementById("id_nulidade");
+	
+	if (document.getElementById("id_pasta").value==""){
+		alert("Informe o codigo da pasta!");
+		document.getElementById("lb_pasta").style.color="red";
+		document.getElementById("id_pasta").focus();
+		return false;
+	}
+	if (document.getElementById("id_dados").value==""){
+		alert("Codigo da pasta nao localizado!");
+		document.getElementById("lb_pasta").style.color="red";
+		document.getElementById("id_pasta").focus();
+		return false;
+	}
+	
+	if (combo2.selectedIndex==0){
+		alert("Informe se houve nulidade!");
+		document.getElementById("lb_nulidade").style.color="red";
+		document.getElementById("id_nulidade").focus();
+		return false;
+	} else if (combo2.selectedIndex==1) {
+		if (document.getElementById("id_data_publ").value=="") {
+			alert("Informe a data");
+			document.getElementById("lb_data_publ").style.color="red";
+			document.getElementById("id_data_publ").focus();
+			return false;
+		}
+	}
+	if (combo.selectedIndex==0){
+		alert("Selecione motivo do embargo!");
+		document.getElementById("lb_embargo").style.color="red";
+		document.getElementById("id_embargo").focus();
+		return false;
+	} else if (combo.selectedIndex!=1 && combo.selectedIndex!=2 && combo.selectedIndex!=3){
+			alert("Motivo selecionado nao esta disponivel!");
+			document.getElementById("lb_embargo").style.color="red";
+			document.getElementById("id_embargo").focus();
+			return false;
+	}
+	frm.submit();
+}
+
+
+
+function fnNulidade(){
+	document.getElementById("data_pub").className="oculta";
+	if (document.getElementById("id_nulidade").value=="S"){
+		document.getElementById( "data_pub" ).className = "normal";
+	}
+}
+
+
+</script>
+
+   </form>
+   <hr>
+</div>
+
+
+<style>
+
+
+.normal {
+	display: block;
+}
+
+.oculta {
+	display: none;
+}
+
+.avancar {
+	border-style:solid;
+	padding-bottom:5px;
+	padding-top:5px;
+	padding-left:10px;
+	padding-right:10px;
+	font-size:20px;
+	letter-spacing:1px;
+}
+
+
+</style>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
+<script>
+$(document).ready(function(){
+	var parametro1 = document.getElementById("id_pasta");
+   
+	$(parametro1).change(function(){
+    
+		var param = document.getElementById("id_pasta").value;
+		document.getElementById("id_dados").value="";
+		$.ajax({
+			type: "get",
+			url: "{% url 'pecas:v003_ajax'   %}",
+			data: {
+				opcao: param
+			},
+			success: function(data){
+				let dados = data[0].value + '/' + data[1].value + '/' + data[2].value+'-'+data[3].value;
+				document.getElementById("id_dados").value = dados;
+				document.getElementById("cod_cliente").value = data[0].value;
+				document.getElementById("autor").value =  data[1].value;
+				document.getElementById("comarca").value =  data[2].value;
+				document.getElementById("uf").value =  data[3].value;
+			}
+		});
+	}); 
+});
+
+</script>
+
+
+{% endblock %}
+

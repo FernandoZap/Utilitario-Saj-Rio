@@ -1,0 +1,57 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+
+<form action="{% url 'app01:faturamento' %}"  method="post">{%csrf_token%}
+
+
+<div class="form-row">
+  <div class="form-group col-md-12">
+    <p>Período do encerramento</p>
+    Data Inicial:&nbsp;
+  <input type="date" id="data_inicial_evento" name="data_inicial_evento" data-date-format='dd-mm-yyyy' />
+Data Final:&nbsp;
+<input type="date" id="data_final_evento" name="data_final_evento" data-date-format='dd-mm-yyyy'  />
+  </div>    
+</div>
+
+<hr>
+
+<div class="form-row">
+  <div class="form-group col-md-12">
+    <p>Período da alteração da tramitação</p>
+    Data Inicial:&nbsp;
+  <input type="date" id="data_inicial_alt_tramitacao" name="data_inicial_alt_tramitacao" data-date-format='dd-mm-yyyy' />
+Data Final:&nbsp;
+<input type="date" id="data_final_alt_tramitacao" name="data_final_alt_tramitacao" data-date-format='dd-mm-yyyy'  />
+  </div>    
+</div>
+
+  <hr>
+    <p><span style="display:none"><input type="submit" id="submit" value="Entrar 2" ></span></p>
+    <p>
+  <a class="btn btn-primary" href="#"  onclick="fnSubmit();"  role="button">Executar</a>
+  
+  </p>
+  <div id="msgDiv" style="display:none">Aguarde ja estamos processando!!</div>
+  <input type="hidden" id="flag" value="0">
+
+
+</form>
+</div>
+</div>
+</div>
+
+<script>
+
+function fnSubmit(){
+
+
+  document.getElementById("msgDiv").style.display = "block";
+  document.getElementById("submit").click();
+
+}
+
+</script>
+
+{% endblock %}

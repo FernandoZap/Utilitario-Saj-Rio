@@ -1,0 +1,365 @@
+{% extends 'base2.html' %}
+
+
+
+{% block sidebar %}
+
+{% endblock %}
+
+ {% block content %}
+
+<br/>
+
+<div class="container">    
+<p align="center">Modelo de Petição - {{ tipo_da_peca}}</p>
+
+<p align="left">Pasta: {{ pasta }}</br> Processo: {{ nr_processo }}</br>  Autor: {{ autor }} </br>
+Comarca: {{ comarca }}-{{ uf }} </br>{{ data_publicacao }}</p>
+
+   <form name="form1"  action="" method="post">{%csrf_token%}
+
+   {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+<div class="row">   
+
+<div class="form-group">
+    
+    <div class="col">
+    <label for="id_01" class="col-form-label">1. Houve intimação do Ministério Público?</label>
+    <select name="intimacao_mp"  id="id_01" class="form-control">
+    <option value="" selected ></option>  
+    <option value="S">Sim</option>
+    <option value="N">Não (Inserir Tese Intimação do MP)</option>
+    </select>   
+    </div>
+    
+    <div class="col">
+    <label for="cj_peremp_litisp" class="col-form-label">2. Há Coisa Julgada, Perempção ou Litispendência?</label>
+    <select name="cj_peremp_litisp"  id="cj_peremp_litisp" class="form-control" onchange="fnCJPerLit();" >
+    <option value="" selected ></option>  
+    <option value="4">Não</option>
+    <option value="1">Coisa Julgada (Inserir Tese Coisa Julgada)</option>
+    <option value="2">Perempção (Inserir Tese Perempção)</option>
+    <option value="3">Litispendência (Inserir Tese Litispendência)</option>
+    </select>   
+    </div>
+    
+    <div class="oculta" id="oculta_num_processo_vinculado" >
+    <div class="col">
+        <div class="col-form-label">
+        <label for="num_processo_vinculado" id="lblNumProc" style="color:#0000FF" >Num.Processo</label>
+        <input type="text" id="num_processo_vinculado" name="num_processo_vinculado" class="dinheiro form-control" maxlength="26" style="display:inline-block" value="" />
+        </div>
+    </div>        
+
+    <div class="col">
+        <div class="col-form-label">
+        <label for="juizo_vinculado" style="color:#0000FF" id="lblJuizo" >Juizo/Comarca/UF</label>
+        <input type="text" id="juizo_vinculado" name="juizo_vinculado" class="dinheiro form-control" style="display:inline-block" value="" />
+        </div>
+    </div>        
+    </div>
+
+    <div class="col">
+    <label for="id_03" class="col-form-label">3. Há Prescrição?</label>
+    <select name="prescricao"  id="id_03" class="form-control">
+    <option value="" selected></option>  
+    <option value="S">Sim (Inserir Tese ED - Omissão Prescrição)</option>
+    <option value="N">Nao</option>
+    </select>   
+    </div>
+
+    <div class="col">
+    <label for="pagamento_adm" class="col-form-label">4. O Magistrado acolheu o pagamento administrativo?</label>
+    <select name="pagamento_adm"  id="pagamento_adm" class="form-control" onchange="fnPagamento();" >
+    <option value="" selected ></option>  
+    <option value="S">Sim</option>
+    <option value="N">Nao (Inserir Tese Omissão Pagamento ADM)</option>
+    </select>   
+    </div>
+    
+    <div class="oculta" id="oculta_pagamento" >
+    <div class="col">
+        <div class="col-form-label">
+        <label for="valor_pagamento_adm" style="color:#0000FF" >Valor pagamento adm R$</label>
+        <input type="text" id="valor_pagamento_adm" name="valor_pagamento_adm" class="dinheiro form-control" style="display:inline-block" value="" />
+        </div>
+    </div>        
+    </div>
+
+    <div class="col">
+    <label for="id_05" class="col-form-label">5. Proprietário Inadimplente?</label>
+    <select name="prop_inadimp"  id="id_05" class="form-control" onchange="fnPropInadimp()" >
+    <option value="" selected ></option>  
+    <option value="S">Sim</option>
+    <option value="N">Nao</option>
+    </select>   
+    </div>
+
+    <div class="oculta" id="oculta_id_06" >
+    <div class="col" >
+    <label for="id_06" class="col-form-label">6. Proprietário Inadimplente com Pagamento Administrativo?</label>
+    <select name="prop_inadimp_com_pagto_Adm" id="id_06" class="form-control">
+    <option value="" selected ></option>  
+    <option value="S">Sim</option>
+    <option value="N">Nao (Inserir Tese Omissão Inadimplente)</option>
+    </select>   
+    </div>
+    </div>
+
+    <div class="col">
+    <label for="lesao_preexistente" class="col-form-label">7. Trata-se de Lesão Preexistente?</label>
+    <select name="lesao_pre"  id="lesao_preexistente" class="form-control" onchange="fnLesaoPre();">
+    <option value="" selected ></option>  
+    <option value="S">Sim (Inserir Tese Omissão Lesão Preexistente)</option>
+    <option value="N">Nao</option>
+    </select>   
+    </div>
+
+    <div class="oculta" id="oculta_lpe" >
+    <div class="col">
+        <div class="col-form-label">
+        <label for="juizo_lpe" style="color:#0000FF" >Vara/Comarca/UF da Lesão Preexistente</label>
+        <input type="text" id="juizo_lpe" name="juizo_lpe" class="form-control" style="display:inline-block" value="" />
+        </div>
+    </div>   
+
+    <div class="col">
+        <div class="col-form-label">
+        <label for="num_proc_lpe" style="color:#0000FF" >Num.Processo Lesão Preexistente</label>
+        <input type="text" id="num_proc_lpe" name="num_proc_lpe" class="form-control" style="display:inline-block" value="" />
+        </div>
+    </div>        
+    <div class="col">
+        <div class="col-form-label">
+        <label for="data_lpe" style="color:#0000FF" >Data Sinistro Lesão Preexistente </label>
+        <input type="text" id="data_lpe" name="data_lpe" class="form-control" style="display:inline-block" value="" />
+        </div>
+    </div>        
+    
+    <div class="col">
+        <div class="col-form-label">
+        <label for="desc_lpe" style="color:#0000FF" >Lesão Preexistente</label>
+        <input type="text" id="desc_lpe" name="desc_lpe" class="form-control" style="display:inline-block" value="" />
+        </div>
+    </div>        
+    </div>
+    
+
+    <div class="col">
+    <label for="id_08" class="col-form-label">8. Houve omissão sobre regulação 8?</label>
+    <select name="omissao_reg8"  id="id_08" class="form-control" onchange="fnOmissaoReg();" >
+    <option value="" selected ></option>  
+    <option value="S">Sim (Inserir Tese Omissão Regulação 8)</option>
+    <option value="N">Nao</option>
+    </select>   
+    </div>
+    
+    <div class="oculta" id="oculta_local_diligencia" >
+    <div class="col">
+        <div class="col-form-label">
+        <label for="local_diligencia" style="color:#0000FF" >Local da Diligência</label>
+        <input type="text" id="local_diligencia" name="local_diligencia" class="form-control" style="display:inline-block" value="" />
+        </div>
+    </div>   
+    </div>
+    
+
+
+    <div class="col">
+    <label for="id_09" class="col-form-label">9. Juros da citação?</label>
+    <select name="juros_citacao"  id="id_09" class="form-control">
+    <option value="" selected ></option>  
+    <option value="1">Sim</option>
+    <option value="2">Nao (Inserir Tese Omissão do Juros)</option>
+    <option value="3">Benéfica</option>
+    </select>   
+    </div>
+
+
+    <div class="col">
+    <label for="id_10" class="col-form-label">10. Correção Monetária?</label>
+    <select name="correcao"  id="id_10" class="form-control">
+    <option value="" selected ></option>  
+    <option value="1">Sim</option>
+    <option value="2">Nao (Inserir Tese Omissão da CM)</option>
+    <option value="3">Benéfica</option>
+    </select>   
+    <hr>
+    </div>
+
+
+</div>    
+</div>  
+
+<input type="hidden" name="pasta" value="{{ pasta }}" />
+<input type="hidden" name="submetido" id="submetido" value="0" />
+<input type="hidden" name="data_publicacao" id="data_publicacao" value="{{ data_publicacao  }}" />
+    <p>
+        <a href="#" onclick="fnAvancar();" id="a_avancar" class="avancar">
+        Avançar
+    </a>
+    </p>
+
+
+<script>
+
+function fnAvancar(){
+    var frm = document.form1;   
+    if (fnFluxo_01()){
+        document.getElementById("id_06").disabled=false;
+        frm.submit();
+    }
+}
+
+function fnFluxo_01(){
+    sel_01 = document.getElementById("id_01");
+    sel_02 = document.getElementById("cj_peremp_litisp");
+    sel_03 = document.getElementById("id_03");
+    sel_04 = document.getElementById("pagamento_adm");
+    sel_05 = document.getElementById("id_05");
+    sel_06 = document.getElementById("id_06");
+    sel_07 = document.getElementById("lesao_preexistente");
+    sel_08 = document.getElementById("id_08");
+    sel_09 = document.getElementById("id_09");
+    sel_10 = document.getElementById("id_10");
+    if (sel_01.selectedIndex==0){
+        document.getElementById("id_01").focus();
+        alert("Informe o item 1");
+        return false;
+    } else if (sel_02.selectedIndex==0){
+        document.getElementById("cj_peremp_litisp").focus();
+        alert("Informe o item 2");
+        return false;
+    } else if (sel_03.selectedIndex==0){
+        document.getElementById("id_03").focus();
+        alert("Informe o item 3");
+        return false;
+    } else if (sel_04.selectedIndex==0){
+        document.getElementById("pagamento_adm").focus();
+        alert("Informe o item 4");
+        return false;
+    } else if (sel_05.selectedIndex==0){
+        document.getElementById("id_05").focus();
+        alert("Informe o item 5");
+        return false;
+    } else if (sel_05.selectedIndex==1 && sel_06.selectedIndex==0){
+        document.getElementById("id_06").focus();
+        alert("Informe o item 6");
+        return false;
+    } else if (sel_07.selectedIndex==0){
+        document.getElementById("lesao_preexistente").focus();
+        alert("Informe o item 7");
+        return false;
+    } else if (sel_08.selectedIndex==0){
+        document.getElementById("id_08").focus();
+        alert("Informe o item 8");
+        return false;
+    } else if (sel_09.selectedIndex==0){
+        document.getElementById("id_09").focus();
+        alert("Informe o item 9");
+        return false;
+    } else if (sel_10.selectedIndex==0){
+        document.getElementById("id_10").focus();
+        alert("Informe o item 10");
+        return false;
+    }
+    return true;
+}   
+
+
+function fnPropInadimp(){
+    if (document.getElementById("id_05").value=="S"){
+        document.getElementById("oculta_id_06").className="normal";
+    } else {
+        document.getElementById("oculta_id_06").className="oculta";
+        var combo = document.getElementById("id_06");
+        combo.selectedIndex = 0;
+    }
+}
+
+
+function fnPagamento(){
+    document.getElementById("oculta_pagamento").className="oculta";
+    if (document.getElementById("pagamento_adm").value=="N"){
+        document.getElementById( "oculta_pagamento" ).className = "normal";
+    }
+}
+function fnCJPerLit(){
+    document.getElementById("oculta_num_processo_vinculado").className="oculta";
+    if (document.getElementById("cj_peremp_litisp").value=="1"){
+        document.getElementById( "oculta_num_processo_vinculado" ).className = "normal";
+        document.getElementById('lblNumProc').innerHTML = 'Num.Processo Coisa Julgada';
+        document.getElementById('lblJuizo').innerHTML = 'Juizo/Comarca/UF Coisa Julgada';
+        
+    } else if (document.getElementById("cj_peremp_litisp").value=="3"){
+        document.getElementById( "oculta_num_processo_vinculado" ).className = "normal";
+        document.getElementById('lblNumProc').innerHTML = 'Num.Processo Litispendencia';
+        document.getElementById('lblJuizo').innerHTML = 'Juizo/Comarca/UF Litispendencia';
+    }
+}
+
+function fnLesaoPre() {
+    document.getElementById("oculta_lpe").className="oculta";
+    if (document.getElementById("lesao_preexistente").value=="S"){
+        document.getElementById("oculta_lpe").className="normal";
+    }
+}
+
+function fnOmissaoReg() {
+    document.getElementById("oculta_local_diligencia").className="oculta";
+    if (document.getElementById("id_08").value=='S'){
+        document.getElementById("oculta_local_diligencia").className="normal";
+    }
+}
+
+
+// $('.telefone').mask('(00) 0 0000-0000');
+$('#valor_pagamento_adm').mask('##.##0,00', {reverse: true});
+$('#num_processo_vinculado').mask('#######-##.####.#.##.####', {reverse: true});
+//$('.estado').mask('AA');
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+   </form>
+   <hr>
+   
+</div>
+</div>
+</div>
+
+
+<style>
+.normal {
+    display: block;
+}
+
+.oculta {
+    display: none;
+}
+
+.avancar {
+    border-style:solid;
+    padding-bottom:5px;
+    padding-top:5px;
+    padding-left:10px;
+    padding-right:10px;
+    font-size:20px;
+    letter-spacing:1px;
+}
+
+
+</style>
+
+{% endblock %}
+
